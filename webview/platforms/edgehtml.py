@@ -28,14 +28,17 @@ import clr
 clr.AddReference('System.Windows.Forms')
 clr.AddReference('System.Collections')
 clr.AddReference('System.Threading')
+clr.AddReference('System.Net.Http')
 
 import System.Windows.Forms as WinForms
 from System import IntPtr, Int32, Func, Type, Environment, Uri
 from System.Drawing import Size, Point, Icon, Color, ColorTranslator, SizeF
+from System.Net.Http import HttpMethod
 
 clr.AddReference(interop_dll_path('Microsoft.Toolkit.Forms.UI.Controls.WebView.dll'))
 from Microsoft.Toolkit.Forms.UI.Controls import WebView
 from System.ComponentModel import ISupportInitialize
+from System.Collections.Generic import KeyValuePair, Dictionary, List, IEnumerable
 
 logger = logging.getLogger('pywebview')
 
@@ -114,7 +117,12 @@ class EdgeHTML:
         if url.startswith('file://'):
             url = resolve_url(url, True)
 
-        self.web_view.Navigate(url)
+        if _user_agent:
+            method = HttpMethod('Get')
+            headers = Dictionary[str,str]({'User-Agent': _user_agent})
+            self.web_view.Navigate(Uri(url), method, '', headers)
+        else:
+            self.web_view.Navigate(Uri(url))
 
     def on_script_notify(self, _, args):
         try:
