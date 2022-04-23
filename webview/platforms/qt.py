@@ -475,7 +475,7 @@ class BrowserView(QMainWindow):
         except Exception as e:
             logger.exception(e)
 
-    def on_load_finished(self):
+    def on_load_finished(self, *args):
         if self.uid == 'web_inspector':
             return
 
