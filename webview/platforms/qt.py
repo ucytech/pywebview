@@ -21,7 +21,7 @@ from webview.util import convert_string, default_html, parse_api_js, js_bridge_c
 from webview.js.css import disable_text_select
 from webview.screen import Screen
 from webview.window import FixPoint
-
+from .error_page import error_page
 
 logger = logging.getLogger('pywebview')
 
@@ -350,6 +350,7 @@ class BrowserView(QMainWindow):
 
     def on_current_url(self):
         url = BrowserView._convert_string(self.view.url().toString())
+        print(url)
         self._current_url = None if url == '' or url.startswith('data:text/html') else url
         self._current_url_semaphore.release()
 
@@ -475,7 +476,11 @@ class BrowserView(QMainWindow):
         except Exception as e:
             logger.exception(e)
 
-    def on_load_finished(self, *args):
+    def on_load_finished(self, ok, *args):
+        if not ok:
+            self.load_html(error_page, 'http://localhost')
+            return
+
         if self.uid == 'web_inspector':
             return
 
