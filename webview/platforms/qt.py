@@ -118,7 +118,7 @@ class BrowserView(QMainWindow):
             menu.exec_(event.globalPos())
 
         # Create a new webview window pointing at the Remote debugger server
-        def show_inspector(self):
+        def show_inspector(self, *args, **kwargs):
             uid = self.parent().uid + '-inspector'
             try:
                 # If inspector already exists, bring it to the front
