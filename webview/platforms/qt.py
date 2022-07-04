@@ -476,10 +476,20 @@ class BrowserView(QMainWindow):
         except Exception as e:
             logger.exception(e)
 
-    def on_load_finished(self, ok, *args):
-        if not ok:
+    def _error_page_cb(self, protocol, *args, **kwargs):
+        if protocol == 'chrome-error:':
             self.load_html(error_page, 'http://localhost')
-            return
+
+
+    def on_load_finished(self, ok, *args):
+        if not ok: #Check if chrome-error page is displays
+            script = """
+            window.location.protocol
+            """
+            try:
+                self.view.page().runJavaScript(script, self._error_page_cb)
+            except: # QT < 5.6
+                self.view.page().mainFrame().evaluateJavaScript(script, self._error_page_cb)
 
         if self.uid == 'web_inspector':
             return
