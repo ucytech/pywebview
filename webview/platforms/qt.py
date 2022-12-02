@@ -741,6 +741,8 @@ def show(uid):
 def minimize(uid):
     BrowserView.instances[uid].minimize()
 
+def maximize(uid):
+    BrowserView.instances[uid].maximize()
 
 def restore(uid):
     BrowserView.instances[uid].restore()
