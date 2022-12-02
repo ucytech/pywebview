@@ -319,7 +319,7 @@ class Window:
         self.gui.minimize(self.uid)
     
     @_shown_call
-    def minimize(self):
+    def maximize(self):
         """
         Maximize window.
         """
