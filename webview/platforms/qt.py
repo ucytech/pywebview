@@ -219,7 +219,7 @@ class BrowserView(QMainWindow):
         self.js_bridge = BrowserView.JSBridge()
         self.js_bridge.window = window
 
-        self.is_fullscreen = False
+        self.is_fullscreen = window.fullscreen
         self.confirm_close = window.confirm_close
         self.text_select = window.text_select
 
@@ -314,9 +314,6 @@ class BrowserView(QMainWindow):
         if is_webengine and platform.system() != 'OpenBSD':
             self.channel = QWebChannel(self.view.page())
             self.view.page().setWebChannel(self.channel)
-
-        if window.fullscreen:
-            self.toggle_fullscreen()
 
         if window.real_url is not None:
             self.view.setUrl(QtCore.QUrl(window.real_url))
@@ -695,6 +692,9 @@ def create_window(window):
         elif window.maximized:
             browser.showNormal()
             browser.showMaximized()
+        elif window.fullscreen:
+            browser.showNormal()
+            browser.showFullScreen()
         elif not window.hidden:
             browser.show()
 
