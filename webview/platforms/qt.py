@@ -318,9 +318,6 @@ class BrowserView(QMainWindow):
         if window.fullscreen:
             self.toggle_fullscreen()
 
-        if window.maximized:
-            self.maximize()
-
         if window.real_url is not None:
             self.view.setUrl(QtCore.QUrl(window.real_url))
         elif window.uid == 'web_inspector':
@@ -695,6 +692,9 @@ def create_window(window):
             # looks like a bug in QT
             browser.showNormal()
             browser.showMinimized()
+        elif window.maximized:
+            browser.showNormal()
+            browser.showMaximized()
         elif not window.hidden:
             browser.show()
 
