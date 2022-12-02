@@ -143,7 +143,8 @@ def start(func=None, args=None, localization={}, gui=None, debug=False, http_ser
 def create_window(title, url=None, html=None, js_api=None, width=800, height=600, x=None, y=None,
                   resizable=True, fullscreen=False, min_size=(200, 100), hidden=False,
                   frameless=False, easy_drag=True,
-                  minimized=False, on_top=False, confirm_close=False, background_color='#FFFFFF',
+                  minimized=False, maximized=False,
+                  on_top=False, confirm_close=False, background_color='#FFFFFF',
                   transparent=False, text_select=False, localization=None):
     """
     Create a web view window using a native GUI. The execution blocks after this function is invoked, so other
@@ -159,6 +160,7 @@ def create_window(title, url=None, html=None, js_api=None, width=800, height=600
     :param frameless: Whether the window should have a frame.
     :param easy_drag: Easy window drag mode when window is frameless.
     :param minimized: Display window minimized
+    :param maximized: Display window maximized
     :param on_top: Keep window above other windows (required OS: Windows)
     :param confirm_close: Display a window close confirmation dialog. Default is False
     :param background_color: Background color as a hex string that is displayed before the content of webview is loaded. Default is white.
@@ -175,7 +177,7 @@ def create_window(title, url=None, html=None, js_api=None, width=800, height=600
 
     window = Window(uid, make_unicode(title), url, html,
                     width, height, x, y, resizable, fullscreen, min_size, hidden,
-                    frameless, easy_drag, minimized, on_top, confirm_close, background_color,
+                    frameless, easy_drag, minimized, maximized, on_top, confirm_close, background_color,
                     js_api, text_select, transparent, localization)
 
     windows.append(window)

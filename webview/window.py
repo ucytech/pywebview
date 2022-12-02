@@ -59,7 +59,7 @@ class EventContainer:
 
 class Window:
     def __init__(self, uid, title, url, html, width, height, x, y, resizable, fullscreen,
-                 min_size, hidden, frameless, easy_drag, minimized, on_top, confirm_close,
+                 min_size, hidden, frameless, easy_drag, minimized, maximized, on_top, confirm_close,
                  background_color, js_api, text_select, transparent, localization):
         self.uid = uid
         self.title = make_unicode(title)
@@ -81,6 +81,7 @@ class Window:
         self.hidden = hidden
         self.on_top = on_top
         self.minimized = minimized
+        self.maximized = maximized
         self.transparent = transparent
         self.localization_override = localization
 
@@ -316,6 +317,13 @@ class Window:
         Minimize window.
         """
         self.gui.minimize(self.uid)
+    
+    @_shown_call
+    def minimize(self):
+        """
+        Maximize window.
+        """
+        self.gui.maximize(self.uid)
 
     @_shown_call
     def restore(self):

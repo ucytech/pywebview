@@ -71,6 +71,7 @@ class BrowserView(QMainWindow):
     window_size_trigger = QtCore.Signal(int, int, FixPoint)
     window_move_trigger = QtCore.Signal(int, int)
     window_minimize_trigger = QtCore.Signal()
+    window_maximize_trigger = QtCore.Signal()
     window_restore_trigger = QtCore.Signal()
     current_url_trigger = QtCore.Signal()
     evaluate_js_trigger = QtCore.Signal(str, str)
@@ -303,6 +304,7 @@ class BrowserView(QMainWindow):
         self.window_size_trigger.connect(self.on_window_size)
         self.window_move_trigger.connect(self.on_window_move)
         self.window_minimize_trigger.connect(self.on_window_minimize)
+        self.window_maximize_trigger.connect(self.on_window_maximize)
         self.window_restore_trigger.connect(self.on_window_restore)
         self.current_url_trigger.connect(self.on_current_url)
         self.evaluate_js_trigger.connect(self.on_evaluate_js)
@@ -315,6 +317,9 @@ class BrowserView(QMainWindow):
 
         if window.fullscreen:
             self.toggle_fullscreen()
+
+        if window.maximized:
+            self.maximize()
 
         if window.real_url is not None:
             self.view.setUrl(QtCore.QUrl(window.real_url))
@@ -469,6 +474,9 @@ class BrowserView(QMainWindow):
 
     def on_window_minimize(self):
         self.setWindowState(QtCore.Qt.WindowMinimized)
+    
+    def on_window_maximize(self):
+        self.setWindowState(QtCore.Qt.WindowMaximized)
 
     def on_window_restore(self):
         self.setWindowState(QtCore.Qt.WindowNoState)
@@ -584,6 +592,9 @@ class BrowserView(QMainWindow):
 
     def minimize(self):
         self.window_minimize_trigger.emit()
+    
+    def maximize(self):
+        self.window_maximize_trigger.emit()
 
     def restore(self):
         self.window_restore_trigger.emit()
