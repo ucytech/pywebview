@@ -275,8 +275,8 @@ class BrowserView(QMainWindow):
         self.view = BrowserView.WebView(self)
 
         if is_webengine:
-            os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = (
-                '--use-fake-ui-for-media-stream --enable-features=AutoplayIgnoreWebAudio')
+            os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = (os.environ.get('QTWEBENGINE_CHROMIUM_FLAGS', '') 
+                + ' --use-fake-ui-for-media-stream --enable-features=AutoplayIgnoreWebAudio')
 
         if _debug['mode'] and is_webengine:
             # Initialise Remote debugging (need to be done only once)
