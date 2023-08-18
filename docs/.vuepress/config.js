@@ -24,6 +24,7 @@ module.exports = {
       { text: 'Blog', link: '/blog/' },
       { text: 'Changelog', link: '/CHANGELOG.md' },
       { text: '2.x', link: 'https://pywebview.flowrl.com/2.4' },
+      { text: '3.x', link: 'https://pywebview.flowrl.com/3.7' },
     ],
     sidebar: {
       '/guide/': [
@@ -53,11 +54,16 @@ module.exports = {
       '/examples/': [
         'cef',
         'change_url',
+        'close_confirm',
+        'confirmation_dialog',
+        'cookies',
         'css_load',
         'close_confirm',
         'debug',
         'destroy_window',
         'events',
+        'expose',
+        'focus',
         'frameless',
         'fullscreen',
         'get_elements',
@@ -65,10 +71,12 @@ module.exports = {
         'hide_window',
         'html_load',
         'js_evaluate',
+        'js_evaluate_async',
         'js_api',
         'loading_animation',
         'links',
         'localization',
+        'menu',
         'min_size',
         'minimize_window',
         'move_window',
@@ -80,6 +88,7 @@ module.exports = {
         'screens',
         'toggle_fullscreen',
         'user_agent',
+        'vibrancy',
         'window_title_change'
       ],
 

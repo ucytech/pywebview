@@ -1,15 +1,119 @@
 # Changelog
 
-## 3.7.2
+## 4.2.2
 
-_Released 16/11/2022_
+_Released 25/06/2023_
 
-### 🐞 Bug fixes
-- [All] Fix missing libraries from the previous release
+- [All] Fix 'NoneType' object has no attribute 'start_server'. #1159
+
+## 4.2.1
+
+_Released 22/06/2023_
+
+- [All] Fix installation
+
+## 4.2
+
+_Released 22/06/2023_
+
+### ⚡ Features
+
+- [All] `webview.create_window(focus=False)` to create a non-focusable window. Thanks @mi4code #1030.
 
 ### 🚀 Improvements
-- [Windows / Linux] Devtools is automatically opened in debug mode.
-- [EdgeChromium] Browser shortcut keys are disabled by default
+
+- [All] Modernization of project infrastructure + typing. Thanks @demberto.
+- [Winforms] Top level menu item support. Thanks @zhengxiaoyao0716.
+- [Winforms] Disable touchpad elastic overscroll. Thanks @firai.
+
+### 🐞 Bug fixes
+
+- [Winforms] Unable to load DLL 'WebView2Loader.dll': The specified module could not be found. Thanks @kawana77b #1078
+- [Cocoa] Fix missing pip dependency `pyobjc-framework-security`.
+
+## 4.1
+
+_Released 02/05/2023_
+
+### ⚡ Features
+
+- [Cocoa/QT/GTK] SSL support for built-in http server  `webview.start(ssl=True)`. Thanks @keredson
+
+### 🚀 Improvements
+
+- [All] JS API exceptions are now printed both in Python and Javascript consoles.
+- [All] Hide menu bar when there is no menu. Thanks @Joffreybvn
+
+
+### 🐞 Bug fixes
+
+- [All] Fix bug where http_port was not being forwarded to the actual window #1060. Thanks @robb-brown
+- [All] Switch from tempfile to os.devnull to fix PyInstaller issue. Thanks @simonrob
+- [Cocoa] Fix getting cookies in cocoa. Thanks @eerimoq
+- [Cocoa] Fix exception occurring when main menu for application cannot be obtained.
+- [Windows] A more robust logic for setting user data directory. Thanks @al-eax
+- [Windows] Fix exception when executing a menu function
+- [Windows] Fix the title and message of the confirmation dialog. Thanks @zhengxiaoyao0716
+
+## 4.0.2
+
+_Released 21/02/2023_
+
+### 🚀 Improvements
+- [All] HTTP server is now multithreaded. This should prevent stalled requests. #1025
+- [Windows] `webview.start(storage_path)` can now be set in private mode. This can be useful if you do not have write access to EdgeChromium default data directory and get 0x80070005 (E_ACCESSDENIED) error. #1026
+
+### 🐞 Bug fixes
+- [All] Fix `AttributeError: module 'webview.http' has no attribute 'running'` exception occurring when multiple windows are opened. Thanks @YidaozhanYa. #1024
+- [Winforms] Fix on_top not having any effect on Windows. #1036
+- [Winforms] Fix `create_window(hidden=True)` makes the show() command not work #1050
+- [Windows] Fix pyinstaller compatibility on Windows. Thanks @simonrob #1044
+- [CEF] Fix window.get_cookies() throwing KeyError exception. #1021
+- [Cocoa] Fix non-QWERTY keyboard shortcuts. Thanks @max-uho
+- [QT] Fix web inspector preventing to open. #1028
+- [GTK] Fix "ImportError: Requiring namespace 'Soup' version '2.4', but '3.0' is already loaded" Thanks @YidaozhanYa #1041
+
+
+## 4.0.1
+
+_Released 19/01/2023_
+
+### 🚀 Improvements
+- [All] Suppress HTTP server logging if not in debug mode.
+
+### 🐞 Bug fixes
+- [All] Fix HTTP server starting twice with a single window. Thanks @robb-brown.
+
+
+## 4.0
+
+_Released 18/01/2023_
+
+### 💔 BREAKING CHANGES
+- [All] Window events are moved into `window.events` namespace. `window.loaded`, `window.shown` etc no longer work.
+- EdgeHTML support is removed.
+
+### ⚡ Features
+- [All] Local homegrown HTTP server is replaced with [bottle.py](https://bottlepy.org). Thanks @robb-brown for WSGI support.
+- [All] Native application menu support. See `examples/menu.py` for usage example. Thanks @sardination
+- [All] `webview.start(private_mode=True, storage_path=None)` Private mode and persistant storage support in a non-private mode. Private mode is enabled by default.
+- [All] `webview.create_window(zoomable=False)` Enable / disable zooming on webpage. Disabled by default.
+- [All] `webview.create_window(draggable=False)` Enable / disable dragging of IMG and A elements. Disabled by default.
+- [All] `webview.create_confirmation_dialog(title, content)` creates a confirmation (Ok, Cancel) dialog. Thanks @sardination.
+- [All] `window.get_cookies()` retrieve all the cookies (including HttpOnly) for the current webpage.
+- [macOS] `webview.create_window(vibancy=False)` Window vibrancy suppport. macOS only. Thanks @CahierX.
+
+### 🚀 Improvements
+- [All] Local relative URLs (eg. src/index.html) are opened using the built-in http server by default. Support for local URLs is still possible using file:// schema
+- [Cocoa] Disable Ctrl+click context menu. Thanks @ecpost.
+- [EdgeChromium] Improve `evaluate_js` performance.
+- [GTK] Enable media / audio / WebGL / clipboard related WebKit features
+
+### 🐞 Bug fixes
+- [Cocoa] Fix passing through keyboard events handled by pywebview. Thanks @ecpost.
+- [GTK] Fix JS bridge maximum return object size limitation. GTK's JS bridge is implemented via HTTP server.
+- [GTK] Fix hanging problem during window closing when JS evaluation is in progress
+
 
 ## 3.7.1
 
@@ -26,7 +130,7 @@ _Released 14/11/2022_
 _Released 04/11/2022_
 
 ### ⚡ Features
-- [All] New `window.moved` event. Thanks @irtimir
+- [All] New `window.events.moved` event. Thanks @irtimir
 
 ### 🚀 Improvements
 - [EdgeChromium] Remove `The system cannot find the file specified - Microsoft Edge WebView2 Runtime Registry path: Computer\HKEY_CURRENT_USER\Microsoft\EdgeUpdate\Clients{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}` error message displayed in debug mode.
