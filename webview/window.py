@@ -99,6 +99,7 @@ class Window:
         easy_drag: bool = True,
         focus: bool = True,
         minimized: bool = False,
+        maximized: bool = False,
         on_top: bool = False,
         confirm_close: bool = False,
         background_color: str = '#FFFFFF',
@@ -134,6 +135,7 @@ class Window:
         self.hidden = hidden
         self.on_top = on_top
         self.minimized = minimized
+        self.maximized = maximized
         self.transparent = transparent
         self.zoomable = zoomable
         self.draggable = draggable
@@ -358,6 +360,13 @@ class Window:
         Minimize window.
         """
         self.gui.minimize(self.uid)
+
+    @_shown_call
+    def maximize(self):
+        """
+        Maximize window.
+        """
+        self.gui.maximize(self.uid)
 
     @_shown_call
     def restore(self) -> None:

@@ -218,6 +218,7 @@ def create_window(
     easy_drag: bool = True,
     focus: bool = True,
     minimized: bool = False,
+    maximized: bool = False,
     on_top: bool = False,
     confirm_close: bool = False,
     background_color: str = '#FFFFFF',
@@ -246,6 +247,7 @@ def create_window(
     :param easy_drag: Easy window drag mode when window is frameless.
     :param focus: Whether to activate the window when user opens it. Window can be controlled with mouse but keyboard input will go to another (active) window and not this one.
     :param minimized: Display window minimized
+    :param maximized: Display window maximized
     :param on_top: Keep window above other windows (required OS: Windows)
     :param confirm_close: Display a window close confirmation dialog. Default is False
     :param background_color: Background color as a hex string that is displayed before the content of webview is loaded. Default is white.
@@ -279,6 +281,7 @@ def create_window(
         easy_drag,
         focus,
         minimized,
+        maximized,
         on_top,
         confirm_close,
         background_color,

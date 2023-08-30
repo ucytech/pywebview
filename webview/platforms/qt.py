@@ -17,6 +17,7 @@ from webview.menu import Menu, MenuAction, MenuSeparator
 from webview.screen import Screen
 from webview.util import DEFAULT_HTML, create_cookie, js_bridge_call, parse_api_js
 from webview.window import FixPoint, Window
+from webview.platforms.error_page import error_page
 
 logger = logging.getLogger('pywebview')
 
@@ -81,6 +82,7 @@ class BrowserView(QMainWindow):
     window_size_trigger = QtCore.Signal(int, int, FixPoint)
     window_move_trigger = QtCore.Signal(int, int)
     window_minimize_trigger = QtCore.Signal()
+    window_maximize_trigger = QtCore.Signal()
     window_restore_trigger = QtCore.Signal()
     current_url_trigger = QtCore.Signal()
     evaluate_js_trigger = QtCore.Signal(str, str)
@@ -134,7 +136,7 @@ class BrowserView(QMainWindow):
             menu.exec_(event.globalPos())
 
         # Create a new webview window pointing at the Remote debugger server
-        def show_inspector(self):
+        def show_inspector(self, *args, **kwargs):
             uid = self.parent().uid + '-inspector'
             try:
                 # If inspector already exists, bring it to the front
@@ -236,7 +238,7 @@ class BrowserView(QMainWindow):
         self.js_bridge = BrowserView.JSBridge()
         self.js_bridge.window = window
 
-        self.is_fullscreen = False
+        self.is_fullscreen = window.fullscreen
         self.confirm_close = window.confirm_close
         self.text_select = window.text_select
 
@@ -277,11 +279,11 @@ class BrowserView(QMainWindow):
 
         if window.on_top:
             flags = flags | QtCore.Qt.WindowStaysOnTopHint
-            
+
         if not window.focus:
             self.setAttribute(QtCore.Qt.WA_ShowWithoutActivating)
             flags = flags | QtCore.Qt.WindowDoesNotAcceptFocus
-            
+
 
         self.setWindowFlags(flags)
 
@@ -298,9 +300,9 @@ class BrowserView(QMainWindow):
         self.view = BrowserView.WebView(self)
 
         if is_webengine:
-            os.environ[
-                'QTWEBENGINE_CHROMIUM_FLAGS'
-            ] = '--use-fake-ui-for-media-stream --enable-features=AutoplayIgnoreWebAudio'
+            os.environ['QTWEBENGINE_CHROMIUM_FLAGS'] = (f'{os.environ.get("QTWEBENGINE_CHROMIUM_FLAGS", "")} '
+                                                        f'--use-fake-ui-for-media-stream '
+                                                        f'--enable-features=AutoplayIgnoreWebAudio')
 
         if _debug['mode'] and is_webengine:
             # Initialise Remote debugging (need to be done only once)
@@ -342,6 +344,7 @@ class BrowserView(QMainWindow):
         self.window_size_trigger.connect(self.on_window_size)
         self.window_move_trigger.connect(self.on_window_move)
         self.window_minimize_trigger.connect(self.on_window_minimize)
+        self.window_maximize_trigger.connect(self.on_window_maximize)
         self.window_restore_trigger.connect(self.on_window_restore)
         self.current_url_trigger.connect(self.on_current_url)
         self.evaluate_js_trigger.connect(self.on_evaluate_js)
@@ -351,9 +354,6 @@ class BrowserView(QMainWindow):
         if is_webengine and platform.system() != 'OpenBSD':
             self.channel = QWebChannel(self.view.page())
             self.view.page().setWebChannel(self.channel)
-
-        if window.fullscreen:
-            self.toggle_fullscreen()
 
         if window.real_url is not None:
             self.view.setUrl(QtCore.QUrl(window.real_url))
@@ -554,6 +554,9 @@ class BrowserView(QMainWindow):
     def on_window_minimize(self):
         self.setWindowState(QtCore.Qt.WindowMinimized)
 
+    def on_window_maximize(self):
+        self.setWindowState(QtCore.Qt.WindowMaximized)
+
     def on_window_restore(self):
         self.setWindowState(QtCore.Qt.WindowNoState)
         self.raise_()
@@ -587,7 +590,21 @@ class BrowserView(QMainWindow):
         except Exception as e:
             logger.exception(e)
 
-    def on_load_finished(self):
+    def _error_page_cb(self, protocol, *args, **kwargs):
+        if protocol == 'chrome-error:':
+            self.load_html(error_page, 'http://localhost')
+
+
+    def on_load_finished(self, ok, *args):
+        if not ok: #Check if chrome-error page is displays
+            script = """
+            window.location.protocol
+            """
+            try:
+                self.view.page().runJavaScript(script, self._error_page_cb)
+            except: # QT < 5.6
+                self.view.page().mainFrame().evaluateJavaScript(script, self._error_page_cb)
+
         if self.uid == 'web_inspector':
             return
 
@@ -682,6 +699,9 @@ class BrowserView(QMainWindow):
 
     def minimize(self):
         self.window_minimize_trigger.emit()
+
+    def maximize(self):
+        self.window_maximize_trigger.emit()
 
     def restore(self):
         self.window_restore_trigger.emit()
@@ -795,8 +815,14 @@ def create_window(window):
             # looks like a bug in QT
             browser.showNormal()
             browser.showMinimized()
+        elif window.maximized:
+            browser.showNormal()
+            browser.showMaximized()
+        elif window.fullscreen:
+            browser.showNormal()
+            browser.showFullScreen()
         elif not window.hidden:
-            browser.show()
+            browser.showNormal()
 
     if window.uid == 'master':
         global _app
@@ -902,6 +928,8 @@ def show(uid):
 def minimize(uid):
     BrowserView.instances[uid].minimize()
 
+def maximize(uid):
+    BrowserView.instances[uid].maximize()
 
 def restore(uid):
     BrowserView.instances[uid].restore()
